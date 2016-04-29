@@ -5,8 +5,12 @@
 #include <boost/regex.hpp>
 #include <vector>
 #include <set>
+#include <algorithm>
 using namespace std;
 using namespace boost;
+ 	
+ 	
+set<string> stop_words;	
  	
  	void hashStopWords(set<string>& stop_words){
  		string file_path = "./stop_words.txt";
@@ -40,17 +44,26 @@ string stem(string s){
 	
 }//TODO
 
-int main(){
-	set<string> stop_words;
-	hashStopWords(stop_words);
-	string seq = "Some words. And... some punctuation.";
+string getModifiedWords(string line){
+	string modified_line = "";
     regex rgExpression("[a-zA-Z][a-zA-Z]+");
 
-    for(sregex_iterator it(seq.begin(), seq.end(), rgExpression), it_end; it != it_end; ++it ){
-        cout << (*it)[0] << "\n";
+    for(sregex_iterator it(line.begin(), line.end(), rgExpression), it_end; it != it_end; ++it ){
+    	string word = (*it)[0];
+    	transform(word.begin(), word.end(), word.begin(), ::tolower);
+    	if(!isStopWord(stop_words, word)){ //if its not a stop word, then add it
+    		modified_line += word + "\n";
+    	}
     }
+    
+    return modified_line;
+}
+
+int main(){
+	
+	hashStopWords(stop_words);
 	ofstream outFile;
-	string res;
+	string modified_words = "";
 	string line;
 	int switch_val;
 	
@@ -73,7 +86,9 @@ int main(){
 				string file_path = "";
 				string index_to_str = boost::lexical_cast<string>(i);
 				file_path = "./Original_Files/txt" + index_to_str + ".txt";
-				ifstream inFile(file_path.c_str());
+				//ifstream inFile(file_path.c_str());
+				ifstream inFile;
+				inFile.open(file_path);
 				if(inFile.is_open()){// false
 					while(getline (inFile, line)){
 					//	istringstream iss(line);
@@ -84,10 +99,14 @@ int main(){
 						// 	res = res + line;
 						// 	cout << res;	
 						// }
+						modified_words += getModifiedWords(line);
+						
 					}//while
 					inFile.close();
-					outFile.open("testDump.txt");
-					outFile << res << endl;
+					outFile.open("./corpus/txt" + index_to_str + "_cleaned.txt");
+					outFile << modified_words << endl;
+					outFile.close();
+					modified_words = "";
 				}//if
 				else{
 					 cout << "Can't open the main files" << endl;
