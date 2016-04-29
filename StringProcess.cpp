@@ -20,7 +20,7 @@ using namespace boost;
 			inFile.close();
 		}
 		else{
-			 cout << "Can't open that" << endl;
+			 cout << "Can't open the stop words file" << endl;
 		}
  		
  	} 
@@ -69,7 +69,7 @@ int main(){
 	switch(switch_val){
 		case 1:{
 			// loop over all 40 of the files
-			for(int i = 0; i < 40; i++){
+			for(int i = 1; i < 41; i++){
 				string file_path = "";
 				string index_to_str = boost::lexical_cast<string>(i);
 				file_path = "./Original_Files/txt" + index_to_str + ".txt";
@@ -90,7 +90,7 @@ int main(){
 					outFile << res << endl;
 				}//if
 				else{
-					 cout << "Can't open that" << endl;
+					 cout << "Can't open the main files" << endl;
 				}
 			}
 			break;
