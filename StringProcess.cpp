@@ -48,21 +48,7 @@ using namespace boost;
   		return regex_replace(word, ending_expression, newending);
 	}
 
-	// creates cleaned words, stores them in cleaned txt files
-	string getModifiedWords(string line){
-		string modified_line = "";
-	    regex rgExpression("[a-zA-Z][a-zA-Z]+");
 	
-	    for(sregex_iterator it(line.begin(), line.end(), rgExpression), it_end; it != it_end; ++it ){
-	    	string word = (*it)[0];
-	    	transform(word.begin(), word.end(), word.begin(), ::tolower);
-	    	if(!isStopWord(stop_words, word)){ //if its not a stop word, then add it
-	    		modified_line += word + "\n";
-	    	}
-	    }
-	    
-	    return modified_line;
-	}
 	
 	/* m() measures the number of consonant sequences between 0 and j. if c is
       a consonant sequence and v a vowel sequence, and <..> indicates arbitrary
@@ -215,25 +201,52 @@ using namespace boost;
 	}
 	
 	string step2(string word){
-		
-	}
+		return word;
+	}//TODO
 	
 	string step3(string word){
-		
-	}
+		return word;
+	}//TODO
 	
 	string step4(string word){
-		
-	}
+		return word;
+	}//TODO
 	
 	string step5a(string word){
-		
-	}
+		return word;
+	}//TODO
 	
 	string step5b(string word){
-		
+		return word;
+	}//TODO
+	
+	string porter(string word){
+		word = step1a(word);
+		word = step1b(word);
+		word = step1c(word);
+		word = step2(word);
+		word = step3(word);
+		word = step4(word);
+		word = step5a(word);
+		word = step5a(word);
+		return word;
 	}
 	
+	// creates cleaned words, stores them in cleaned txt files
+	string getModifiedWords(string line){
+		string modified_line = "";
+	    regex rgExpression("[a-zA-Z][a-zA-Z]+");
+	
+	    for(sregex_iterator it(line.begin(), line.end(), rgExpression), it_end; it != it_end; ++it ){
+	    	string word = (*it)[0];
+	    	transform(word.begin(), word.end(), word.begin(), ::tolower);
+	    	if(!isStopWord(stop_words, word)){ //if its not a stop word, then add it
+	    		modified_line += porter(word) + "\n";
+	    	}
+	    }
+	    
+	    return modified_line;
+	}
 	
 	
 	// tests that getModifiedWords(string line) works properly
