@@ -139,7 +139,7 @@ using namespace boost;
 	string replace_ending(string word, string the_ending, string newending){
 		regex ending(the_ending);
   		return regex_replace(word, ending, newending);
-	}replace_ending
+	}
 	
 	// just following the first step of the porter algorithm
 	string step1a(string word){
