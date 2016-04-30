@@ -22,24 +22,24 @@ using namespace boost;
 			while(getline (inFile, word)){
 				stop_words.insert(word);
 				word = ""; // clear it
-			}
+			}//while
 			inFile.close();
-		}
+		}//if
 		else{
 			 cout << "Can't open the stop words file" << endl;
-		}
+		}//else
  		//return stop_words;
- 	} 
+ 	}//hashStopWords 
  	
  	// returns true if given word is a word contained in set
  	bool isStopWord(set<string>& stop_words, string word){
  		if (stop_words.find(word) != stop_words.end()){//if it has the word is in the hash_set, then it is a stop word
  			return true;
- 		}
+ 		}//if
  		else {//otherwise it is not a stop word
  			return false;
- 		}
- 	}
+ 		}//else
+ 	}//isStopWord
 	
 	
 	//strips the given word with the given endin
@@ -49,7 +49,7 @@ using namespace boost;
 		string newending = "";
   		regex ending_expression(ending);
   		return regex_replace(word, ending_expression, newending);
-	}
+	}//stem
 
 	
 	
@@ -71,10 +71,10 @@ using namespace boost;
 		// to know how many of those forms there are
 	    for(sregex_iterator it(word.begin(), word.end(), VCExpression), it_end; it != it_end; ++it ){
 	    	vc_count++;
-	    }
+	    }//for
 	    
 	    return vc_count;
-	}
+	}//m
 	
 	// returns true if the word end with the given ending
 	// false otherwise
@@ -82,7 +82,7 @@ using namespace boost;
 		//regex pattern(ending + "$");
 		regex pattern("[a-zA-z]+" + ending);
 		return regex_match(word, pattern);
-	}
+	}//ends
 	
 	
 	//returns true if the word contains a vowel,
@@ -96,18 +96,18 @@ using namespace boost;
 	    	vowel_count++;
 	    	 if(vowel_count > 0){
 	    		return true;
-	    	}
-	    }
+	    	}//if
+	    }//for
 	    
 	    return false;//if it gets here, we know there were no vowels, so return false
-	}
+	}//contanis
 	
 	//return true if the stem of the word ends with the given ending
 	//false otherwise
 	bool stem_ends(string word, string strip, string ending){
 		word = stem(word, strip);
 		return ends(word, ending);
-	}
+	}//stem_ends
 	
 	//returns true if the given word ends in a double consonant
 	//ex: tt, vv, bb, cc
@@ -117,12 +117,12 @@ using namespace boost;
 		if(length > 1 && word.at(length - 1) == word.at(length - 2)){ // checking if last two characters are same
 			regex pattern("[a-z]+[^aeiouy][^aeiouy]");
 			return regex_match(word, pattern);
-		}
+		}//if
 		else {
 			return false;
-		}
+		}//else
 		
-	}
+	}//ends_double
 	
 	//returns true if the given word ends in a consonant, vowel, consant format
 	// but the last consonant does not end in w, x, or y
@@ -130,7 +130,7 @@ using namespace boost;
 	bool ends_cvc(string word){
 		regex pattern("[a-z]*[^aeiouy][aeiouy][^aeiouwxy]");
 		return regex_match(word, pattern);
-	}
+	}//ends_cvc
 	
 	// helper used to replace the given ending of the given word with the 
 	// new given ending
@@ -139,7 +139,7 @@ using namespace boost;
 	string replace_ending(string word, string the_ending, string newending){
 		regex ending(the_ending);
   		return regex_replace(word, ending, newending);
-	}
+	}replace_ending
 	
 	// just following the first step of the porter algorithm
 	string step1a(string word){
@@ -152,20 +152,20 @@ using namespace boost;
 	  	string result = word;
 	  	if(ends(word, "sses")){
 	  		result = replace_ending(word, "sses", "ss");
-	  	}
+	  	}//if
 	  	else if(ends(word, "ies")){
 	  		result = replace_ending(word, "ies", "i");
-	  	}
+	  	}//else if
 	  	else if(ends(word, "ss")){
 	  		result = replace_ending(word, "ss", "ss");
-	  	}
+	  	}//else if
 	  	else if(ends(word, "s")){
 	  		result = replace_ending(word, "s", "");
-	  	}
+	  	}//else if
 	  	
 	  	return result;
 
-	}
+	}//step1a
 	
 	// just following the first step of the porter algorithm
 	string step1b(string word){
@@ -179,47 +179,47 @@ using namespace boost;
 		string result = word;
 	  	if(ends(word, "eed") && m(stem(word, "eed")) > 0){
 	  		result = replace_ending(word, "eed", "ee");
-	  	}
+	  	}//if
 	  	else if(ends(word, "ed") && contains_vowel(stem(word, "ed"))){
 	  		result = replace_ending(word, "ed", "");
 	  		if(ends(result, "at")){
 	  			result = replace_ending(result, "at", "ate");
-	  		}
+	  		}//if
 	  		else if(ends(result, "bl")){
 	  			result = replace_ending(result, "bl", "ble");
-	  		}
+	  		}//else if
 	  		else if(ends(word, "iz")){
 	  			result = replace_ending(result, "iz", "ize");
-	  		}
+	  		}//else
 	  		else if(ends_doubleC(result) && !(ends(result, "l") || ends(result, "s") || ends(result, "z"))){
 	  			result = result.substr(0, result.length() - 1); // strips last character off
-	  		}
+	  		}//else if
 	  		else if(m(result) == 1 && ends_cvc(result)){
 	  			result += "e";
-	  		}
-	  	}
+	  		}//else if
+	  	}//else if
 	  	else if(ends(word, "ing") && contains_vowel(stem(word, "ing"))){
 	  		result = replace_ending(word, "ing", "");
 	  		if(ends(result, "at")){
 	  			result = replace_ending(result, "at", "ate");
-	  		}
+	  		}//if
 	  		else if(ends(result, "bl")){
 	  			result = replace_ending(result, "bl", "ble");
-	  		}
+	  		}//else if
 	  		else if(ends(word, "iz")){
 	  			result = replace_ending(result, "iz", "ize");
-	  		}
+	  		}//else if
 	  		else if(ends_doubleC(result) && !(ends(result, "l") || ends(result, "s") || ends(result, "z"))){
 	  			result = result.substr(0, result.length() - 1); // strips last character off
-	  		}
+	  		}//else if
 	  		else if(m(result) == 1 && ends_cvc(result)){
 	  			result += "e";
-	  		}
-	  	}
+	  		}//else if
+	  	}//else if
 		
 		return result;
 		
-	}
+	}//step1b
 	
 	// just following the first step of the porter algorithm
 	string step1c(string word){
@@ -228,186 +228,186 @@ using namespace boost;
  		string result = word;
  		if(ends(word, "y") && contains_vowel(stem(word, "y"))){
  			result = replace_ending(word, "y", "i");
- 		}
+ 		}//step1c
 
 		return result;
-	}
+	}//step1c
 	
 	// just following the second step of the porter algorithm
 	string step2(string word){
 		string result = word;
 		if(ends(word, "ational") && m(stem(word, "ational")) > 0){
 			result = replace_ending(word, "ational", "ate");
-		}
+		}//if
 		else if(ends(word, "tional") && m(stem(word, "tional")) > 0){
 			result = replace_ending(word, "tional", "tion");
-		}
+		}//else if
 		else if(ends(word, "enci") && m(stem(word, "enci")) > 0){
 			result = replace_ending(word, "enci", "ence");
-		}
+		}//else if
 		else if(ends(word, "anci") && m(stem(word, "anci")) > 0){
 			result = replace_ending(word, "anci", "ance");
-		}
+		}//else if
 		else if(ends(word, "abli") && m(stem(word, "abli")) > 0){
 			result = replace_ending(word, "abli", "able");
-		}
+		}//else if
 		else if(ends(word, "alli") && m(stem(word, "alli")) > 0){
 			result = replace_ending(word, "alli", "al");
-		}
+		}//else if
 		else if(ends(word, "entli") && m(stem(word, "entli")) > 0){
 			result = replace_ending(word, "entli", "ent");
-		}
+		}//else if
 		else if(ends(word, "eli") && m(stem(word, "eli")) > 0){
 			result = replace_ending(word, "eli", "e");
-		}
+		}//else if
 		else if(ends(word, "ousli") && m(stem(word, "ousli")) > 0){
 			result = replace_ending(word, "ousli", "ous");
-		}
+		}//else if
 		else if(ends(word, "ization") && m(stem(word, "ization")) > 0){
 			result = replace_ending(word, "ization", "ize");
-		}
+		}//else if
 		else if(ends(word, "ation") && m(stem(word, "ation")) > 0){
 			result = replace_ending(word, "ation", "ate");
-		}
+		}//else if
 		else if(ends(word, "ator") && m(stem(word, "ator")) > 0){
 			result = replace_ending(word, "ator", "ate");
-		}
+		}//else if
 		else if(ends(word, "alism") && m(stem(word, "alism")) > 0){
 			result = replace_ending(word, "alism", "al");
-		}
+		}//else if
 		else if(ends(word, "iveness") && m(stem(word, "iveness")) > 0){
 			result = replace_ending(word, "iveness", "ive");
-		}
+		}//else if
 		else if(ends(word, "fulness") && m(stem(word, "fulness")) > 0){
 			result = replace_ending(word, "fulness", "ful");
-		}
+		}//else if
 		else if(ends(word, "ousness") && m(stem(word, "ousness")) > 0){
 			result = replace_ending(word, "ousness", "ous");
-		}
+		}//else if
 		else if(ends(word, "aliti") && m(stem(word, "aliti")) > 0){
 			result = replace_ending(word, "aliti", "al");
-		}
+		}//else if
 		else if(ends(word, "iviti") && m(stem(word, "iviti")) > 0){
 			result = replace_ending(word, "iviti", "ive");
-		}
+		}//else if
 		else if(ends(word, "biliti") && m(stem(word, "biliti")) > 0){
 			result = replace_ending(word, "biliti", "ble");
-		}
+		}//else if
 		
 		return result;
 		
-	}//TODO
+	}//step2
 	
 	// just following the third step of the porter algorithm
 	string step3(string word){
 		string result = word;
 		if(ends(word, "icate") && m(stem(word, "icate")) > 0){
 			result = replace_ending(word, "icate", "ic");
-		}
+		}//if
 		else if(ends(word, "ative") && m(stem(word, "ative")) > 0){
 			result = replace_ending(word, "ative", "");
-		}
+		}//else if
 		else if(ends(word, "alize") && m(stem(word, "alize")) > 0){
 			result = replace_ending(word, "alize", "al");
-		}
+		}//else if
 		else if(ends(word, "iciti") && m(stem(word, "iciti")) > 0){
 			result = replace_ending(word, "iciti", "ic");
-		}
+		}//else if
 		else if(ends(word, "ical") && m(stem(word, "ical")) > 0){
 			result = replace_ending(word, "ical", "ic");
-		}
+		}//else if
 		else if(ends(word, "ful") && m(stem(word, "ful")) > 0){
 			result = replace_ending(word, "ful", "");
-		}
+		}//else if
 		else if(ends(word, "ness") && m(stem(word, "ness")) > 0){
 			result = replace_ending(word, "ness", "");
-		}
+		}//else if
 		return result;
-	}//TODO
+	}//step3
 	
 	// just following the fourth step of the porter algorithm
 	string step4(string word){
 		string result = word;
 		if(ends(word, "al") && m(stem(word, "al")) > 1){
 			result = replace_ending(word, "al", "");
-		}
+		}//if
 		else if(ends(word, "ance") && m(stem(word, "ance")) > 1){
 			result = replace_ending(word, "ance", "");
-		}
+		}//else if
 		else if(ends(word, "ence") && m(stem(word, "ence")) > 1){
 			result = replace_ending(word, "ence", "");
-		}
+		}//else if
 		else if(ends(word, "er") && m(stem(word, "er")) > 1){
 			result = replace_ending(word, "er", "");
-		}
+		}//else if
 		else if(ends(word, "ic") && m(stem(word, "ic")) > 1){
 			result = replace_ending(word, "ic", "");
-		}
+		}//else if
 		else if(ends(word, "able") && m(stem(word, "able")) > 1){
 			result = replace_ending(word, "able", "");
-		}
+		}//else if
 		else if(ends(word, "ible") && m(stem(word, "ible")) > 1){
 			result = replace_ending(word, "ible", "");
-		}
+		}//else if
 		else if(ends(word, "ant") && m(stem(word, "ant")) > 1){
 			result = replace_ending(word, "ant", "");
-		}
+		}//else if
 		else if(ends(word, "ement") && m(stem(word, "ement")) > 1){
 			result = replace_ending(word, "ement", "");
-		}
+		}//else if
 		else if(ends(word, "ment") && m(stem(word, "ment")) > 1){
 			result = replace_ending(word, "ment", "");
-		}
+		}//else if
 		else if(ends(word, "ent") && m(stem(word, "ent")) > 1){
 			result = replace_ending(word, "ent", "");
-		}
+		}//else if
 		else if(ends(word, "ion") && (m(stem(word, "ion")) > 1 && (ends(stem(word, "ion"), "s") || ends(stem(word, "ion"), "t")))){
 			result = replace_ending(word, "ion", "");
-		}
+		}//else if
 		else if(ends(word, "ou") && m(stem(word, "ou")) > 1){
 			result = replace_ending(word, "ou", "");
-		}
+		}//else if
 		else if(ends(word, "ism") && m(stem(word, "ism")) > 1){
 			result = replace_ending(word, "ism", "");
-		}
+		}//else if
 		else if(ends(word, "ate") && m(stem(word, "ate")) > 1){
 			result = replace_ending(word, "ate", "");
-		}
+		}//else if
 		else if(ends(word, "iti") && m(stem(word, "iti")) > 1){
 			result = replace_ending(word, "iti", "");
-		}
+		}//else if
 		else if(ends(word, "ous") && m(stem(word, "ous")) > 1){
 			result = replace_ending(word, "ous", "");
-		}
+		}//else if
 		else if(ends(word, "ive") && m(stem(word, "ive")) > 1){
 			result = replace_ending(word, "ive", "");
-		}
+		}//else if
 		else if(ends(word, "ize") && m(stem(word, "ize")) > 1){
 			result = replace_ending(word, "ize", "");
-		}
+		}//else if
 		return result;
-	}//TODO
+	}//setp4
 	
 	// just following the fifth step of the porter algorithm
 	string step5a(string word){
 		string result = word;
 		if(ends(word, "e") && m(stem(word, "e")) > 1){
 			result = replace_ending(word, "e", "");
-		}
+		}//if
 		else if(ends(word, "e") && (m(stem(word, "e")) == 1 && !ends_cvc(stem(word, "e")))){
 			result = replace_ending(word, "e", "");
-		}
+		}//else if
 		return result;
-	}//TODO
+	}//step5a
 	
 	// just following the fifth step of the porter algorithm
 	string step5b(string word){
 		string result = word;
 		if(m(word) > 1 && ends_doubleC(word) && ends(word, "l")){
 			result = result.substr(0, result.length() - 1); // strips last character off
-		}
+		}//if
 		return result;
-	}//TODO
+	}//step5b
 	
 	//the porter algorithm, just calls each step
 	// and stores the running value into word,
@@ -422,7 +422,7 @@ using namespace boost;
 		word = step5a(word);
 		word = step5a(word);
 		return word;
-	}
+	}//porter
 	
 	// creates cleaned words
 	// you recieve a line from the original file, which you the use regex to
@@ -443,11 +443,11 @@ using namespace boost;
 	    	transform(word.begin(), word.end(), word.begin(), ::tolower);
 	    	if(!isStopWord(stop_words, word)){ //if its not a stop word, then add it
 	    		modified_line += porter(word) + "\n";
-	    	}
-	    }
+	    	}//if
+	    }//for
 	    
 	    return modified_line;
-	}
+	}//getModifiedWords
 	
 	
 	// tests that getModifiedWords(string line) works properly
@@ -466,19 +466,19 @@ using namespace boost;
 					result = true;
 					cout << word_to_check << endl;
 					break;
-				}
+				}//if
 				else{
 					result = false;
-				}
+				}//else
 			}//while
 			inFile.close();
 			word_to_check = "";
 		}//if
 		else{
 			cout << "Can't open the main files" << endl;
-		}
+		}//else
 		return result;
-	}
+	}//testModifiedWords
 
 
 int main(){
@@ -499,10 +499,10 @@ int main(){
 	
 	if(input == "1"){
 		switch_val = 1;
-	}
+	}//if
 	else if (input == "q"){
 		switch_val = 2;
-	}
+	}//else if
 	
 	switch(switch_val){
 		case 1:{
@@ -526,19 +526,19 @@ int main(){
 				}//if
 				else{
 					 cout << "Can't open the main files" << endl;
-				}
-			}
+				}//else
+			}//for
 			break;
-    }
+    }//case 1
 		
 		case 2:{
 			cout << "Exiting..." << endl;
 			break;
-		}
+		}//case 2
 		default:{
 			cout << "Not a valid input." << endl;
-		}
-	}
+		}//default
+	}//switch
 	
 	// ----------------------------- TESTS -------------------------------------
 	
