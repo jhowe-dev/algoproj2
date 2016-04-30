@@ -42,11 +42,11 @@ using namespace boost;
  	}
 	
 	
-	// string stem(string s){
-		
-	// 	return s;
-		
-	// }//TODO
+	string stem(string word, string ending){
+		string newending = "";
+  		regex ending_expression(ending);
+  		return regex_replace(word, ending_expression, newending);
+	}
 
 	// creates cleaned words, stores them in cleaned txt files
 	string getModifiedWords(string line){
@@ -79,7 +79,7 @@ using namespace boost;
 		regex VCExpression("[aeiouy]+[^aeiouy]+");
 		int vc_count = 0;
 	    for(sregex_iterator it(word.begin(), word.end(), VCExpression), it_end; it != it_end; ++it ){
-	    	vc_count++
+	    	vc_count++;
 	    }
 	    
 	    return vc_count;
@@ -89,6 +89,19 @@ using namespace boost;
 		//regex pattern(ending + "$");
 		regex pattern("[a-zA-z]+" + ending);
 		return regex_match(word, pattern);
+	}
+	
+	bool contains_vowel(string word){
+		regex vowel_expression("[aeiouy]+");
+		int vowel_count = 0;
+	    for(sregex_iterator it(word.begin(), word.end(), vowel_expression), it_end; it != it_end; ++it ){
+	    	vowel_count++;
+	    	 if(vowel_count > 0){
+	    		return true;
+	    	}
+	    }
+	    
+	    return false;
 	}
 	
 	void step1a(string word){
@@ -203,8 +216,6 @@ using namespace boost;
 	}
 
 int main(){
-	int measure = m("tree");
-	cout << "the measure is: " << measure << endl;
 	
 	hashStopWords(stop_words);
 	ofstream outFile;
@@ -271,13 +282,13 @@ int main(){
 	
 	// ----------------------------- TESTS -------------------------------------
 	
-	// checks to confirm cleaned_files are cleaned
-	for(int i = 1; i < 41; i++){
-		string cleaned_file_path = "";
-		string index_to_str = lexical_cast<string>(i);
-		cleaned_file_path = "./corpus/txt" + index_to_str + "_cleaned.txt";
-		cout << "File path: "<< cleaned_file_path << " returned " << testModifiedWords(cleaned_file_path) << endl;
-	}
+	// // checks to confirm cleaned_files are cleaned
+	// for(int i = 1; i < 41; i++){
+	// 	string cleaned_file_path = "";
+	// 	string index_to_str = lexical_cast<string>(i);
+	// 	cleaned_file_path = "./corpus/txt" + index_to_str + "_cleaned.txt";
+	// 	cout << "File path: "<< cleaned_file_path << " returned " << testModifiedWords(cleaned_file_path) << endl;
+	// }
 	
 	return 0;
 }//main
