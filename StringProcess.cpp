@@ -10,8 +10,10 @@ using namespace std;
 using namespace boost;
  	
  	
-set<string> stop_words;	
+	set<string> stop_words;	
  	
+ 	// store stop words in a hashset
+ 	// was void
  	void hashStopWords(set<string>& stop_words){
  		string file_path = "./stop_words.txt";
 	 	ifstream inFile(file_path.c_str());
@@ -26,9 +28,10 @@ set<string> stop_words;
 		else{
 			 cout << "Can't open the stop words file" << endl;
 		}
- 		
+ 		//return stop_words;
  	} 
  	
+ 	// returns true if given word is a word contained in hashset
  	bool isStopWord(set<string>& stop_words, string word){
  		if (stop_words.find(word) != stop_words.end()){//if it has the word is in the hash_set, then it is a stop word
  			return true;
@@ -37,29 +40,171 @@ set<string> stop_words;
  			return false;
  		}
  	}
-
-string stem(string s){
 	
-	return s;
 	
-}//TODO
+	// string stem(string s){
+		
+	// 	return s;
+		
+	// }//TODO
 
-string getModifiedWords(string line){
-	string modified_line = "";
-    regex rgExpression("[a-zA-Z][a-zA-Z]+");
+	// creates cleaned words, stores them in cleaned txt files
+	string getModifiedWords(string line){
+		string modified_line = "";
+	    regex rgExpression("[a-zA-Z][a-zA-Z]+");
+	
+	    for(sregex_iterator it(line.begin(), line.end(), rgExpression), it_end; it != it_end; ++it ){
+	    	string word = (*it)[0];
+	    	transform(word.begin(), word.end(), word.begin(), ::tolower);
+	    	if(!isStopWord(stop_words, word)){ //if its not a stop word, then add it
+	    		modified_line += word + "\n";
+	    	}
+	    }
+	    
+	    return modified_line;
+	}
+	
+	/* m() measures the number of consonant sequences between 0 and j. if c is
+      a consonant sequence and v a vowel sequence, and <..> indicates arbitrary
+      presence,
 
-    for(sregex_iterator it(line.begin(), line.end(), rgExpression), it_end; it != it_end; ++it ){
-    	string word = (*it)[0];
-    	transform(word.begin(), word.end(), word.begin(), ::tolower);
-    	if(!isStopWord(stop_words, word)){ //if its not a stop word, then add it
-    		modified_line += word + "\n";
-    	}
-    }
-    
-    return modified_line;
-}
+         <c><v>       gives 0
+         <c>vc<v>     gives 1
+         <c>vcvc<v>   gives 2
+         <c>vcvcvc<v> gives 3
+         ....
+   */
+	int m(string word){
+		//so one or more vowels immediately paired with one or more consants
+		regex VCExpression("[aeiouy]+[^aeiouy]+");
+		int vc_count = 0;
+	    for(sregex_iterator it(word.begin(), word.end(), VCExpression), it_end; it != it_end; ++it ){
+	    	vc_count++
+	    }
+	    
+	    return vc_count;
+	}
+	
+	bool ends(string word, string ending){
+		//regex pattern(ending + "$");
+		regex pattern("[a-zA-z]+" + ending);
+		return regex_match(word, pattern);
+	}
+	
+	void step1a(string word){
+// SSES		->		SS		    		caresses	->		caress
+// IES		->		I		    		ponies		->		poni
+//     									ties		->		ti
+// SS		->		SS		    		caress		->		caress
+// S		->				    		cats		->		cat
+
+  	string newending = "";
+  	if(ends(word, "sses")){
+  		regex ending("sses");
+  		newending = "ss";
+  		string result = regex_replace(word, ending, newending);
+  	}
+  	else if(ends(word, "ies")){
+  		regex ending("ies");
+  		newending = "i";
+  		string result = regex_replace(word, ending, newending);
+  	}
+  	else if(ends(word, "s")){
+  		regex ending("s");
+  		newending = "";
+  		string result = regex_replace(word, ending, newending);
+  		cout << "result is: " << result << endl;
+  	}
+
+	}
+	
+	void step1b(string word){
+// (m>0) EED	->		EE		  feed			->		feed
+//  agreed		->		agree
+// (*v*) ED		->				  plastered		->		plaster
+// bled			->		bled
+// (*v*) ING	->				  motoring		->		motor
+// sing			->		sing
+	
+	string newending = "";
+  	if(ends(word, "eed")){
+  		regex ending("eed");
+  		newending = "ee";
+  		string result = regex_replace(word, ending, newending);
+  	}
+  	else if(ends(word, "ies")){
+  		regex ending("ies");
+  		newending = "i";
+  		string result = regex_replace(word, ending, newending);
+  	}
+  	else if(ends(word, "s")){
+  		regex ending("s");
+  		newending = "";
+  		string result = regex_replace(word, ending, newending);
+  		cout << "result is: " << result << endl;
+  	}
+	
+
+		
+	}
+	
+	void step1c(){
+		
+	}
+	
+	void step2(){
+		
+	}
+	
+	void step3(){
+		
+	}
+	
+	void step4(){
+		
+	}
+	
+	void step5a(){
+		
+	}
+	
+	void step5b(){
+		
+	}
+	
+	
+	
+	// tests that getModifiedWords(string line) works properly
+	bool testModifiedWords(string cleaned_file_name){
+		bool result = false;
+		string line = "";
+		string word_to_check = "";
+		ifstream inFile;
+		inFile.open(cleaned_file_name);
+		if(inFile.is_open()){// false
+			while(getline (inFile, line)){
+				word_to_check = line;
+				if(isStopWord(stop_words, word_to_check)){
+					result = true;
+					cout << word_to_check << endl;
+					break;
+				}
+				else{
+					result = false;
+				}
+			}//while
+			inFile.close();
+			word_to_check = "";
+		}//if
+		else{
+			cout << "Can't open the main files" << endl;
+		}
+		return result;
+	}
 
 int main(){
+	int measure = m("tree");
+	cout << "the measure is: " << measure << endl;
 	
 	hashStopWords(stop_words);
 	ofstream outFile;
@@ -84,7 +229,7 @@ int main(){
 			// loop over all 40 of the files
 			for(int i = 1; i < 41; i++){
 				string file_path = "";
-				string index_to_str = boost::lexical_cast<string>(i);
+				string index_to_str = lexical_cast<string>(i);
 				file_path = "./Original_Files/txt" + index_to_str + ".txt";
 				//ifstream inFile(file_path.c_str());
 				ifstream inFile;
@@ -123,45 +268,16 @@ int main(){
 			cout << "Not a valid input." << endl;
 		}
 	}
+	
+	// ----------------------------- TESTS -------------------------------------
+	
+	// checks to confirm cleaned_files are cleaned
+	for(int i = 1; i < 41; i++){
+		string cleaned_file_path = "";
+		string index_to_str = lexical_cast<string>(i);
+		cleaned_file_path = "./corpus/txt" + index_to_str + "_cleaned.txt";
+		cout << "File path: "<< cleaned_file_path << " returned " << testModifiedWords(cleaned_file_path) << endl;
+	}
+	
 	return 0;
 }//main
-
-
-
-// void addWordsFromLine(string line){
-// 		istringstream iss(line);
-// 		string word = "";
-// 		while(iss){ // while there is still more to read from the line
-//  		word = "";
-//  		if(getline(ss, word, " ")){ // gets the species name basically and store in s
-//  			s = editFormat(s); // properly formats it
-// 	 		species = s; // sets to species
-// 	 		s = "" ; // clears s for later use
-//  		}
-//  		while(true){
-// 	 		if(!getline(ss, s, ',')) break; // if there is no more to read from the file exit the loop	
-// 	 		s = s.substr(1); // strips begining whitespace so " apples" becomes "apples"
-// 	 		s = editFormat(s);
-// 		 	subtypes.push_back(s); // adds a subtype of the species is added to this list 
-// 		 	s = "";
-//  		}
-//  	}
-// }
-
-
-	// while(ss){ // while there is still more to read from the line
- //		string s = "";
- 		
- //		if(getline(ss, s, ':')){ // gets the species name basically and store in s
- //			s = editFormat(s); // properly formats it
-	//  		species = s; // sets to species
-	//  		s = "" ; // clears s for later use
- //		}
- //		while(true){
-	//  		if(!getline(ss, s, ',')) break; // if there is no more to read from the file exit the loop	
-	//  		s = s.substr(1); // strips begining whitespace so " apples" becomes "apples"
-	//  		s = editFormat(s);
-	// 	 	subtypes.push_back(s); // adds a subtype of the species is added to this list 
-	// 	 	s = "";
- //		}
- //	}
