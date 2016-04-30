@@ -269,6 +269,24 @@ using namespace boost;
 		if(ends(word, "icate") && m(stem(word, "icate")) > 0){
 			result = replace_ending(word, "icate", "ic");
 		}
+		else if(ends(word, "ative") && m(stem(word, "ative")) > 0){
+			result = replace_ending(word, "ative", "");
+		}
+		else if(ends(word, "alize") && m(stem(word, "alize")) > 0){
+			result = replace_ending(word, "alize", "al");
+		}
+		else if(ends(word, "iciti") && m(stem(word, "iciti")) > 0){
+			result = replace_ending(word, "iciti", "ic");
+		}
+		else if(ends(word, "ical") && m(stem(word, "ical")) > 0){
+			result = replace_ending(word, "ical", "ic");
+		}
+		else if(ends(word, "ful") && m(stem(word, "ful")) > 0){
+			result = replace_ending(word, "ful", "");
+		}
+		else if(ends(word, "ness") && m(stem(word, "ness")) > 0){
+			result = replace_ending(word, "ness", "");
+		}
 		return result;
 	}//TODO
 	
