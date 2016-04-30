@@ -10,10 +10,10 @@ using namespace std;
 using namespace boost;
  	
  	
-	set<string> stop_words;	
+	set<string> stop_words;	//set of all the stop words
  	
- 	// store stop words in a hashset
- 	// was void
+ 	// store stop words in a set
+ 	// read the stop words from the file and just put each word in the set
  	void hashStopWords(set<string>& stop_words){
  		string file_path = "./stop_words.txt";
 	 	ifstream inFile(file_path.c_str());
@@ -31,7 +31,7 @@ using namespace boost;
  		//return stop_words;
  	} 
  	
- 	// returns true if given word is a word contained in hashset
+ 	// returns true if given word is a word contained in set
  	bool isStopWord(set<string>& stop_words, string word){
  		if (stop_words.find(word) != stop_words.end()){//if it has the word is in the hash_set, then it is a stop word
  			return true;
@@ -42,6 +42,9 @@ using namespace boost;
  	}
 	
 	
+	//strips the given word with the given endin
+	// ex: "apples" is given and enging "s" is given
+	// this "apples" -> "apple"
 	string stem(string word, string ending){
 		string newending = "";
   		regex ending_expression(ending);
@@ -64,6 +67,8 @@ using namespace boost;
 		//so one or more vowels immediately paired with one or more consants
 		regex VCExpression("[aeiouy]+[^aeiouy]+");
 		int vc_count = 0;
+		//loop through all the matches of the VC form and increment counter
+		// to know how many of those forms there are
 	    for(sregex_iterator it(word.begin(), word.end(), VCExpression), it_end; it != it_end; ++it ){
 	    	vc_count++;
 	    }
@@ -71,6 +76,8 @@ using namespace boost;
 	    return vc_count;
 	}
 	
+	// returns true if the word end with the given ending
+	// false otherwise
 	bool ends(string word, string ending){
 		//regex pattern(ending + "$");
 		regex pattern("[a-zA-z]+" + ending);
@@ -78,9 +85,13 @@ using namespace boost;
 	}
 	
 	
+	//returns true if the word contains a vowel,
+	//false otherwise
 	bool contains_vowel(string word){
 		regex vowel_expression("[aeiouy]+");
 		int vowel_count = 0;
+		//using regex, picks up everything thats a vowel, so if this loop runs
+		// then we know we had a vowel so return true
 	    for(sregex_iterator it(word.begin(), word.end(), vowel_expression), it_end; it != it_end; ++it ){
 	    	vowel_count++;
 	    	 if(vowel_count > 0){
@@ -88,14 +99,19 @@ using namespace boost;
 	    	}
 	    }
 	    
-	    return false;
+	    return false;//if it gets here, we know there were no vowels, so return false
 	}
 	
+	//return true if the stem of the word ends with the given ending
+	//false otherwise
 	bool stem_ends(string word, string strip, string ending){
 		word = stem(word, strip);
 		return ends(word, ending);
 	}
 	
+	//returns true if the given word ends in a double consonant
+	//ex: tt, vv, bb, cc
+	//false otherwise
 	bool ends_doubleC(string word){
 		int length = word.length();
 		if(length > 1 && word.at(length - 1) == word.at(length - 2)){ // checking if last two characters are same
@@ -108,16 +124,24 @@ using namespace boost;
 		
 	}
 	
+	//returns true if the given word ends in a consonant, vowel, consant format
+	// but the last consonant does not end in w, x, or y
+	// the stem ends cvc, where the second c is not W, X or Y (e.g. -WIL, -HOP).
 	bool ends_cvc(string word){
 		regex pattern("[a-z]*[^aeiouy][aeiouy][^aeiouwxy]");
 		return regex_match(word, pattern);
 	}
 	
+	// helper used to replace the given ending of the given word with the 
+	// new given ending
+	// ex: word: "hopping", ending: "ping", newending: "s"
+	// result: "hops"
 	string replace_ending(string word, string the_ending, string newending){
 		regex ending(the_ending);
   		return regex_replace(word, ending, newending);
 	}
 	
+	// just following the first step of the porter algorithm
 	string step1a(string word){
 // SSES		->		SS		    		caresses	->		caress
 // IES		->		I		    		ponies		->		poni
@@ -143,6 +167,7 @@ using namespace boost;
 
 	}
 	
+	// just following the first step of the porter algorithm
 	string step1b(string word){
 // (m>0) EED	->		EE		  feed			->		feed
 //  							  agreed		->		agree
@@ -196,6 +221,7 @@ using namespace boost;
 		
 	}
 	
+	// just following the first step of the porter algorithm
 	string step1c(string word){
 //		(*v*) Y		->		I		    		happy		->		happi
  //   											sky		->		sky
@@ -207,6 +233,7 @@ using namespace boost;
 		return result;
 	}
 	
+	// just following the second step of the porter algorithm
 	string step2(string word){
 		string result = word;
 		if(ends(word, "ational") && m(stem(word, "ational")) > 0){
@@ -271,6 +298,7 @@ using namespace boost;
 		
 	}//TODO
 	
+	// just following the third step of the porter algorithm
 	string step3(string word){
 		string result = word;
 		if(ends(word, "icate") && m(stem(word, "icate")) > 0){
@@ -297,6 +325,7 @@ using namespace boost;
 		return result;
 	}//TODO
 	
+	// just following the fourth step of the porter algorithm
 	string step4(string word){
 		string result = word;
 		if(ends(word, "al") && m(stem(word, "al")) > 1){
@@ -359,6 +388,7 @@ using namespace boost;
 		return result;
 	}//TODO
 	
+	// just following the fifth step of the porter algorithm
 	string step5a(string word){
 		string result = word;
 		if(ends(word, "e") && m(stem(word, "e")) > 1){
@@ -370,6 +400,7 @@ using namespace boost;
 		return result;
 	}//TODO
 	
+	// just following the fifth step of the porter algorithm
 	string step5b(string word){
 		string result = word;
 		if(m(word) > 1 && ends_doubleC(word) && ends(word, "l")){
@@ -378,6 +409,9 @@ using namespace boost;
 		return result;
 	}//TODO
 	
+	//the porter algorithm, just calls each step
+	// and stores the running value into word,
+	// which eventually gets returned fully, and correctly stemmed
 	string porter(string word){
 		word = step1a(word);
 		word = step1b(word);
@@ -390,7 +424,16 @@ using namespace boost;
 		return word;
 	}
 	
-	// creates cleaned words, stores them in cleaned txt files
+	// creates cleaned words
+	// you recieve a line from the original file, which you the use regex to
+	// get only words that are greater than 1 letter from that given line. Then you
+	// you iterate through the words, lowercasing each one and determining if its 
+	// a stop word or not. If it is not a stop word then you stem it properly passing
+	// it onto the porter algorithm which returns a stemmed word. Then you simply add
+	// that stemmed word along with a newline, so that evey stemmed word shows up on its own
+	// line in the cleaned files, onto the modified line string. The string will finally
+	// have all the stemmed words and no stop words in it from the orginally given line
+	// which it then just returns
 	string getModifiedWords(string line){
 		string modified_line = "";
 	    regex rgExpression("[a-zA-Z][a-zA-Z]+");
@@ -408,6 +451,8 @@ using namespace boost;
 	
 	
 	// tests that getModifiedWords(string line) works properly
+	// mainly tests if there are any stop words in the cleaned file
+	// currently
 	bool testModifiedWords(string cleaned_file_name){
 		bool result = false;
 		string line = "";
@@ -435,16 +480,17 @@ using namespace boost;
 		return result;
 	}
 
+
 int main(){
 	
 	// string result = step1c("sky");
 	// cout << "Became " << result << endl;
 
-	hashStopWords(stop_words);
-	ofstream outFile;
-	string modified_words = "";
-	string line;
-	int switch_val;
+	hashStopWords(stop_words); //store stop words
+	ofstream outFile; // used to write to cleaned files
+	string modified_words = ""; // used to contain to correct words to add to cleaned files 
+	string line;//used to read each line from original files
+	int switch_val;//holds input value in int form
 	
 	string input = "";
 	cout << "Welcome to our Project 2 interface: " << endl;
@@ -460,23 +506,23 @@ int main(){
 	
 	switch(switch_val){
 		case 1:{
-			// loop over all 40 of the files
+			// loop over all 40 of the original files
 			for(int i = 1; i < 41; i++){
 				string file_path = "";
 				string index_to_str = lexical_cast<string>(i);
-				file_path = "./Original_Files/txt" + index_to_str + ".txt";
+				file_path = "./Original_Files/txt" + index_to_str + ".txt";//dynamically set file names
 				//ifstream inFile(file_path.c_str());
 				ifstream inFile;
-				inFile.open(file_path);
-				if(inFile.is_open()){// false
+				inFile.open(file_path);//open file
+				if(inFile.is_open()){
 					while(getline (inFile, line)){
-						modified_words += getModifiedWords(line);
+						modified_words += getModifiedWords(line); // get stemmed, and stop words removed, words
 					}//while
 					inFile.close();
-					outFile.open("./corpus/txt" + index_to_str + "_cleaned.txt");
-					outFile << modified_words << endl;
+					outFile.open("./corpus/txt" + index_to_str + "_cleaned.txt"); // open corresponding cleaned file
+					outFile << modified_words << endl; // write to it
 					outFile.close();
-					modified_words = "";
+					modified_words = ""; // clear to be used for next line
 				}//if
 				else{
 					 cout << "Can't open the main files" << endl;
