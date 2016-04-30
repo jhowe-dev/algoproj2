@@ -470,16 +470,7 @@ int main(){
 				inFile.open(file_path);
 				if(inFile.is_open()){// false
 					while(getline (inFile, line)){
-					//	istringstream iss(line);
-					// call a helper function here that reads each word in a line
-					// and calls stop word function and stemmer funciton
-						//addWordsFromLine(line);
-						// if(!isStopWord(line)){
-						// 	res = res + line;
-						// 	cout << res;	
-						// }
 						modified_words += getModifiedWords(line);
-						
 					}//while
 					inFile.close();
 					outFile.open("./corpus/txt" + index_to_str + "_cleaned.txt");
