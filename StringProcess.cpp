@@ -201,23 +201,90 @@ using namespace boost;
 	}
 	
 	string step2(string word){
-		return word;
+		string result = word;
+		if(ends(word, "ational") && m(stem(word, "ational")) > 0){
+			result = replace_ending(word, "ational", "ate");
+		}
+		else if(ends(word, "tional") && m(stem(word, "tional")) > 0){
+			result = replace_ending(word, "tional", "tion");
+		}
+		else if(ends(word, "enci") && m(stem(word, "enci")) > 0){
+			result = replace_ending(word, "enci", "ence");
+		}
+		else if(ends(word, "anci") && m(stem(word, "anci")) > 0){
+			result = replace_ending(word, "anci", "ance");
+		}
+		else if(ends(word, "abli") && m(stem(word, "abli")) > 0){
+			result = replace_ending(word, "abli", "able");
+		}
+		else if(ends(word, "alli") && m(stem(word, "alli")) > 0){
+			result = replace_ending(word, "alli", "al");
+		}
+		else if(ends(word, "entli") && m(stem(word, "entli")) > 0){
+			result = replace_ending(word, "entli", "ent");
+		}
+		else if(ends(word, "eli") && m(stem(word, "eli")) > 0){
+			result = replace_ending(word, "eli", "e");
+		}
+		else if(ends(word, "ousli") && m(stem(word, "ousli")) > 0){
+			result = replace_ending(word, "ousli", "ous");
+		}
+		else if(ends(word, "ization") && m(stem(word, "ization")) > 0){
+			result = replace_ending(word, "ization", "ize");
+		}
+		else if(ends(word, "ation") && m(stem(word, "ation")) > 0){
+			result = replace_ending(word, "ation", "ate");
+		}
+		else if(ends(word, "ator") && m(stem(word, "ator")) > 0){
+			result = replace_ending(word, "ator", "ate");
+		}
+		else if(ends(word, "alism") && m(stem(word, "alism")) > 0){
+			result = replace_ending(word, "alism", "al");
+		}
+		else if(ends(word, "iveness") && m(stem(word, "iveness")) > 0){
+			result = replace_ending(word, "iveness", "ive");
+		}
+		else if(ends(word, "fulness") && m(stem(word, "fulness")) > 0){
+			result = replace_ending(word, "fulness", "ful");
+		}
+		else if(ends(word, "ousness") && m(stem(word, "ousness")) > 0){
+			result = replace_ending(word, "ousness", "ous");
+		}
+		else if(ends(word, "aliti") && m(stem(word, "aliti")) > 0){
+			result = replace_ending(word, "aliti", "al");
+		}
+		else if(ends(word, "iviti") && m(stem(word, "iviti")) > 0){
+			result = replace_ending(word, "iviti", "ive");
+		}
+		else if(ends(word, "biliti") && m(stem(word, "biliti")) > 0){
+			result = replace_ending(word, "biliti", "ble");
+		}
+		
+		return result;
+		
 	}//TODO
 	
 	string step3(string word){
-		return word;
+		string result = word;
+		if(ends(word, "icate") && m(stem(word, "icate")) > 0){
+			result = replace_ending(word, "icate", "ic");
+		}
+		return result;
 	}//TODO
 	
 	string step4(string word){
-		return word;
+		string result = word;
+		return result;
 	}//TODO
 	
 	string step5a(string word){
-		return word;
+		string result = word;
+		return result;
 	}//TODO
 	
 	string step5b(string word){
-		return word;
+		string result = word;
+		return result;
 	}//TODO
 	
 	string porter(string word){
