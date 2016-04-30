@@ -361,6 +361,12 @@ using namespace boost;
 	
 	string step5a(string word){
 		string result = word;
+		if(ends(word, "e") && m(stem(word, "e")) > 1){
+			result = replace_ending(word, "e", "");
+		}
+		else if(ends(word, "e") && (m(stem(word, "e")) == 1 && !ends_cvc(stem(word, "e")))){
+			result = replace_ending(word, "e", "");
+		}
 		return result;
 	}//TODO
 	
