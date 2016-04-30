@@ -97,8 +97,15 @@ using namespace boost;
 	}
 	
 	bool ends_doubleC(string word){
-		regex pattern("[a-z]+[^aeiouy][^aeiouy]");
-		return regex_match(word, pattern);
+		int length = word.length();
+		if(length > 1 && word.at(length - 1) == word.at(length - 2)){ // checking if last two characters are same
+			regex pattern("[a-z]+[^aeiouy][^aeiouy]");
+			return regex_match(word, pattern);
+		}
+		else {
+			return false;
+		}
+		
 	}
 	
 	bool ends_cvc(string word){
@@ -292,6 +299,63 @@ using namespace boost;
 	
 	string step4(string word){
 		string result = word;
+		if(ends(word, "al") && m(stem(word, "al")) > 1){
+			result = replace_ending(word, "al", "");
+		}
+		else if(ends(word, "ance") && m(stem(word, "ance")) > 1){
+			result = replace_ending(word, "ance", "");
+		}
+		else if(ends(word, "ence") && m(stem(word, "ence")) > 1){
+			result = replace_ending(word, "ence", "");
+		}
+		else if(ends(word, "er") && m(stem(word, "er")) > 1){
+			result = replace_ending(word, "er", "");
+		}
+		else if(ends(word, "ic") && m(stem(word, "ic")) > 1){
+			result = replace_ending(word, "ic", "");
+		}
+		else if(ends(word, "able") && m(stem(word, "able")) > 1){
+			result = replace_ending(word, "able", "");
+		}
+		else if(ends(word, "ible") && m(stem(word, "ible")) > 1){
+			result = replace_ending(word, "ible", "");
+		}
+		else if(ends(word, "ant") && m(stem(word, "ant")) > 1){
+			result = replace_ending(word, "ant", "");
+		}
+		else if(ends(word, "ement") && m(stem(word, "ement")) > 1){
+			result = replace_ending(word, "ement", "");
+		}
+		else if(ends(word, "ment") && m(stem(word, "ment")) > 1){
+			result = replace_ending(word, "ment", "");
+		}
+		else if(ends(word, "ent") && m(stem(word, "ent")) > 1){
+			result = replace_ending(word, "ent", "");
+		}
+		else if(ends(word, "ion") && (m(stem(word, "ion")) > 1 && (ends(stem(word, "ion"), "s") || ends(stem(word, "ion"), "t")))){
+			result = replace_ending(word, "ion", "");
+		}
+		else if(ends(word, "ou") && m(stem(word, "ou")) > 1){
+			result = replace_ending(word, "ou", "");
+		}
+		else if(ends(word, "ism") && m(stem(word, "ism")) > 1){
+			result = replace_ending(word, "ism", "");
+		}
+		else if(ends(word, "ate") && m(stem(word, "ate")) > 1){
+			result = replace_ending(word, "ate", "");
+		}
+		else if(ends(word, "iti") && m(stem(word, "iti")) > 1){
+			result = replace_ending(word, "iti", "");
+		}
+		else if(ends(word, "ous") && m(stem(word, "ous")) > 1){
+			result = replace_ending(word, "ous", "");
+		}
+		else if(ends(word, "ive") && m(stem(word, "ive")) > 1){
+			result = replace_ending(word, "ive", "");
+		}
+		else if(ends(word, "ize") && m(stem(word, "ize")) > 1){
+			result = replace_ending(word, "ize", "");
+		}
 		return result;
 	}//TODO
 	
@@ -366,7 +430,7 @@ int main(){
 	
 	// string result = step1c("sky");
 	// cout << "Became " << result << endl;
-	
+
 	hashStopWords(stop_words);
 	ofstream outFile;
 	string modified_words = "";
