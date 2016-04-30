@@ -91,6 +91,7 @@ using namespace boost;
 		return regex_match(word, pattern);
 	}
 	
+	
 	bool contains_vowel(string word){
 		regex vowel_expression("[aeiouy]+");
 		int vowel_count = 0;
@@ -104,84 +105,125 @@ using namespace boost;
 	    return false;
 	}
 	
-	void step1a(string word){
+	bool stem_ends(string word, string strip, string ending){
+		word = stem(word, strip);
+		return ends(word, ending);
+	}
+	
+	bool ends_doubleC(string word){
+		regex pattern("[a-z]+[^aeiouy][^aeiouy]");
+		return regex_match(word, pattern);
+	}
+	
+	bool ends_cvc(string word){
+		regex pattern("[a-z]*[^aeiouy][aeiouy][^aeiouwxy]");
+		return regex_match(word, pattern);
+	}
+	
+	string replace_ending(string word, string the_ending, string newending){
+		regex ending(the_ending);
+  		return regex_replace(word, ending, newending);
+	}
+	
+	string step1a(string word){
 // SSES		->		SS		    		caresses	->		caress
 // IES		->		I		    		ponies		->		poni
 //     									ties		->		ti
 // SS		->		SS		    		caress		->		caress
 // S		->				    		cats		->		cat
 
-  	string newending = "";
-  	if(ends(word, "sses")){
-  		regex ending("sses");
-  		newending = "ss";
-  		string result = regex_replace(word, ending, newending);
-  	}
-  	else if(ends(word, "ies")){
-  		regex ending("ies");
-  		newending = "i";
-  		string result = regex_replace(word, ending, newending);
-  	}
-  	else if(ends(word, "s")){
-  		regex ending("s");
-  		newending = "";
-  		string result = regex_replace(word, ending, newending);
-  		cout << "result is: " << result << endl;
-  	}
+	  	string result = "";
+	  	if(ends(word, "sses")){
+	  		result = replace_ending(word, "sses", "ss");
+	  	}
+	  	else if(ends(word, "ies")){
+	  		result = replace_ending(word, "ies", "i");
+	  	}
+	  	else if(ends(word, "ss")){
+	  		result = replace_ending(word, "ss", "ss");
+	  	}
+	  	else if(ends(word, "s")){
+	  		result = replace_ending(word, "s", "");
+	  	}
+	  	
+	  	return result;
 
 	}
 	
-	void step1b(string word){
+	string step1b(string word){
 // (m>0) EED	->		EE		  feed			->		feed
-//  agreed		->		agree
+//  							  agreed		->		agree
 // (*v*) ED		->				  plastered		->		plaster
-// bled			->		bled
+// 								  bled			->		bled
 // (*v*) ING	->				  motoring		->		motor
-// sing			->		sing
+// 								  sing			->		sing
 	
-	string newending = "";
-  	if(ends(word, "eed")){
-  		regex ending("eed");
-  		newending = "ee";
-  		string result = regex_replace(word, ending, newending);
-  	}
-  	else if(ends(word, "ies")){
-  		regex ending("ies");
-  		newending = "i";
-  		string result = regex_replace(word, ending, newending);
-  	}
-  	else if(ends(word, "s")){
-  		regex ending("s");
-  		newending = "";
-  		string result = regex_replace(word, ending, newending);
-  		cout << "result is: " << result << endl;
-  	}
-	
-
+		string result = "";
+	  	if(ends(word, "eed") && m(stem(word, "eed")) > 0){
+	  		result = replace_ending(word, "eed", "ee");
+	  	}
+	  	else if(ends(word, "ed") && contains_vowel(stem(word, "ed"))){
+	  		result = replace_ending(word, "ed", "");
+	  		if(ends(result, "at")){
+	  			result = replace_ending(result, "at", "ate");
+	  		}
+	  		else if(ends(result, "bl")){
+	  			result = replace_ending(result, "bl", "ble");
+	  		}
+	  		else if(ends(word, "iz")){
+	  			result = replace_ending(result, "iz", "ize");
+	  		}
+	  		else if(ends_doubleC(result) && !(ends(result, "l") || ends(result, "s") || ends(result, "z"))){
+	  			result = result.substr(0, result.length() - 1); // strips last character off
+	  		}
+	  		else if(m(result) == 1 && ends_cvc(result)){
+	  			result += "e";
+	  		}
+	  	}
+	  	else if(ends(word, "ing") && contains_vowel(stem(word, "ing"))){
+	  		result = replace_ending(word, "ing", "");
+	  		if(ends(result, "at")){
+	  			result = replace_ending(result, "at", "ate");
+	  		}
+	  		else if(ends(result, "bl")){
+	  			result = replace_ending(result, "bl", "ble");
+	  		}
+	  		else if(ends(word, "iz")){
+	  			result = replace_ending(result, "iz", "ize");
+	  		}
+	  		else if(ends_doubleC(result) && !(ends(result, "l") || ends(result, "s") || ends(result, "z"))){
+	  			result = result.substr(0, result.length() - 1); // strips last character off
+	  		}
+	  		else if(m(result) == 1 && ends_cvc(result)){
+	  			result += "e";
+	  		}
+	  	}
+		
+		return result;
 		
 	}
 	
-	void step1c(){
+	string step1c(string word){
 		
 	}
 	
-	void step2(){
+	string step2(string word){
 		
 	}
 	
-	void step3(){
+	string step3(string word){
 		
 	}
 	
-	void step4(){
+	string step4(string word){
 		
 	}
 	
-	void step5a(){
+	string step5a(string word){
 		
 	}
 	
-	void step5b(){
+	string step5b(string word){
 		
 	}
 	
@@ -216,6 +258,9 @@ using namespace boost;
 	}
 
 int main(){
+	
+	// string result = step1a("cats");
+	// cout << "Became " << result << endl;
 	
 	hashStopWords(stop_words);
 	ofstream outFile;
