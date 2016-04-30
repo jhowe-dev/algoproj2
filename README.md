@@ -9,3 +9,7 @@ AND RUN.
 
 THE CLEANED FILES UNDER CORPUS ALREADY EXIST. BUT IF U DELETED THEM AND RAN
 THE ABOVE STATEMENT, YOU CAN SEE THE CLEANED FILES BEING GENERATED.
+
+LINK TO OUR C9 workspace where u can compile and run our code in the terminal easily
+
+https://ide.c9.io/cmoores/cisc320_project2
