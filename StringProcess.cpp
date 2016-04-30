@@ -132,7 +132,7 @@ using namespace boost;
 // SS		->		SS		    		caress		->		caress
 // S		->				    		cats		->		cat
 
-	  	string result = "";
+	  	string result = word;
 	  	if(ends(word, "sses")){
 	  		result = replace_ending(word, "sses", "ss");
 	  	}
@@ -158,7 +158,7 @@ using namespace boost;
 // (*v*) ING	->				  motoring		->		motor
 // 								  sing			->		sing
 	
-		string result = "";
+		string result = word;
 	  	if(ends(word, "eed") && m(stem(word, "eed")) > 0){
 	  		result = replace_ending(word, "eed", "ee");
 	  	}
@@ -204,7 +204,14 @@ using namespace boost;
 	}
 	
 	string step1c(string word){
-		
+//		(*v*) Y		->		I		    		happy		->		happi
+ //   											sky		->		sky
+ 		string result = word;
+ 		if(ends(word, "y") && contains_vowel(stem(word, "y"))){
+ 			result = replace_ending(word, "y", "i");
+ 		}
+
+		return result;
 	}
 	
 	string step2(string word){
@@ -259,7 +266,7 @@ using namespace boost;
 
 int main(){
 	
-	// string result = step1a("cats");
+	// string result = step1c("sky");
 	// cout << "Became " << result << endl;
 	
 	hashStopWords(stop_words);
