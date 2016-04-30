@@ -372,6 +372,9 @@ using namespace boost;
 	
 	string step5b(string word){
 		string result = word;
+		if(m(word) > 1 && ends_doubleC(word) && ends(word, "l")){
+			result = result.substr(0, result.length() - 1); // strips last character off
+		}
 		return result;
 	}//TODO
 	
